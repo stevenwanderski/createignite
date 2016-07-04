@@ -1,0 +1,5 @@
+; $Id
+name = bxdev_admin
+description = "Implements admin tweaks."
+package = bx
+core = 7.x

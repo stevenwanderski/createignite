@@ -1,0 +1,124 @@
+<?php
+
+/**
+ * Implementation of hook_init().
+ */
+function bxdev_admin_init(){
+	drupal_add_js(drupal_get_path('module', 'bxdev_admin') . '/jquery.easing.1.3.js');
+	drupal_add_js(drupal_get_path('module', 'bxdev_admin') . '/jquery.scrollTo-1.4.2-min.js');
+	drupal_add_js(drupal_get_path('module', 'bxdev_admin') . '/bxdev_admin.js');
+}
+
+/**
+ * Alter content in Administration menu bar before it is rendered.
+ */
+function bxdev_admin_admin_menu_output_alter(&$content) {
+  // remove Tasks and Index
+  $admin_menu_exclusions = array(
+    t('Tasks'),
+    t('Index'),
+  );
+  foreach($content['menu'] as $menu_key => $menu_tree) {
+    if (in_array($menu_tree['#title'], $admin_menu_exclusions))
+      unset($content['menu'][$menu_key]);
+  }
+}
+
+/**
+ * Implementation of hook_preprocess_page().
+ */
+function bxdev_admin_preprocess_page(&$vars){
+	
+	// homepage content
+	$home_node = node_load(1);
+	$content_home = $home_node->body['und'][0]['value'];
+	$content_home .= views_embed_view('homepage_categories');
+	$vars['content_home'] = $content_home;
+	
+	// about content
+	$about_node = node_load(2);
+	$vars['content_about'] = $about_node->body['und'][0]['value'];
+	
+	// contact content
+	$contact_node = node_load(3);
+	$contact_info = $contact_node->field_contact_info['und'][0]['value'];
+	$vars['content_contact'] = '<div class="left">' . drupal_render(node_view($contact_node)) . '</div><div class="right">' . $contact_info . '</div><div class="clear"></div>';
+	
+	// branding content
+	$vars['content_branding'] = '<div class="left">' . views_embed_view('projects', 'branding_block') . '</div><div class="right"></div>';
+
+	// print content
+	$vars['content_print'] = '<div class="left">' . views_embed_view('projects', 'print_block') . '</div><div class="right"></div>';
+	
+	// packaging content
+	$vars['content_packaging'] = '<div class="left">' . views_embed_view('projects', 'packaging_block') . '</div><div class="right"></div>';
+	
+	// web content
+	$vars['content_web'] = '<div class="left">' . views_embed_view('projects', 'web_block') . '</div><div class="right"></div>';
+	
+	// product content
+	$vars['content_product'] = '<div class="left">' . views_embed_view('projects', 'product_block') . '</div><div class="right"></div>';
+	
+	// dpm($contact_node);
+}
+
+/**
+ * Implementation of hook_form_alter().
+ */
+function bxdev_admin_form_alter(&$form, $form_state, $form_id){
+	if($form_id == 'webform_client_form_3'){
+		$form['actions']['submit'] = array(
+			'#type' => 'submit',
+			'#ajax' => array(
+				'callback' => 'bxdev_admin_contact_callback',
+				'wrapper' => str_replace('_','-',$form['#form_id']),
+				'effect' => 'fade',
+			),
+			'#value' => 'Bombs Away!',
+		);
+	}
+}
+
+/**
+ * Handle the contact ajax callback
+ */
+function bxdev_admin_contact_callback($form, $form_state){
+	if(form_get_errors()){
+		return $form;
+	}else{
+		return '<div class="contact-thank-you">Thank you!</div>';
+	}
+}
+
+/**
+ * Implementation of hook_menu().
+ */
+function bxdev_admin_menu(){
+	$items['project/image'] = array(
+		'page callback' => 'bxdev_admin_project_image',
+		'access arguments' => array('access content'),
+		'type' => MENU_CALLBACK,
+	);
+	return $items;
+}
+
+/**
+ * Return the image styled project image
+ */
+function bxdev_admin_project_image($nid){
+	$node = node_load($nid);
+	$image = array(
+		'path' => $node->field_image['und'][0]['uri'],
+		'style_name' => 'project_full',
+	);
+	$output = '<div class="project-image">' . theme_image_style($image) . '</div>';
+	// $output .= '<div class="project-quote">' . $node->field_project_quote['und'][0]['value'] . '</div>';
+	print $output;
+}
+
+
+
+
+
+
+

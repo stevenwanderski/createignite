@@ -1,0 +1,33 @@
+core = 7.x
+description = Funky bx theme.
+engine = phptemplate
+name = bx
+
+; Regions =====================================================================
+
+regions[sidebar_first] = Sidebar first
+regions[sidebar_second] = Sidebar second
+regions[content] = Content
+regions[header] = Header
+regions[help] = Help
+regions[footer] = Footer
+regions[page_top] = Page top
+regions[page_bottom] = Page bottom
+regions[highlighted] = Highlighted
+
+; Stylesheets =================================================================
+
+stylesheets[all][] = css/reset.css
+stylesheets[all][] = css/base.css
+;stylesheets[screen][] = css/drupal.css
+stylesheets[all][] = css/bx.css
+
+scripts[] = js/jquery.bxSlider.js
+scripts[] = js/bx.js
+
+; Information added by drupal.org packaging script on 2010-09-30
+version = "7.x-3.0-beta3"
+core = "7.x"
+project = "tao"
+datestamp = "1285858563"
+
